@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website with Preloader</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* ========================================================
+           ১. প্রি-লোডার (Splash Screen) এবং পানির ফোঁটা অ্যানিমেশন
+           ======================================================== */
+        #preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background-color: #3a3a3a; /* ডার্ক গ্রে ব্যাকগ্রাউন্ড */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            overflow: hidden;
+            transition: opacity 0.5s ease-out, visibility 0.5s;
+        }
+
+        /* মোশন গ্রাফিক্স ওয়াটার রিপল কন্টেইনার */
+        .ripple-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            /* পারফেক্ট সেন্টারিংয়ের জন্য জ্যামিতিক ফিক্স */
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle, rgba(29,112,184,0.8) 0%, rgba(0,150,64,0.4) 70%, rgba(58,58,58,0) 100%);
+            animation: waterDrop 3s cubic-bezier(0.1, 0.8, 0.3, 1) infinite;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* পানির ফোঁটার একাধিক লেয়ার তৈরি করতে ডিলে */
+        .ripple:nth-child(2) {
+            animation-delay: 1s;
+        }
+        .ripple:nth-child(3) {
+            animation-delay: 2s;
+        }
+
+        /* মোশন গ্রাফিক্স পারফেক্ট অ্যানিমেশন ইফেক্ট */
+        @keyframes waterDrop {
+            0% {
+                width: 0px;
+                height: 0px;
+                opacity: 0.8;
+            }
+            100% {
+                width: 400px;
+                height: 400px;
+                opacity: 0;
+            }
+        }
+
+        /* মাঝখানের মূল লোগো */
+        .preloader-logo {
+            position: relative;
+            z-index: 10;
+            width: 120px; 
+            height: auto;
+        }
+
+        /* loading টেক্সট স্টাইল */
+        .loading-text {
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 16px;
+            margin-top: 40px;
+            letter-spacing: 1px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.5s ease-in-out;
+        }
+
+        /* টেক্সটটি দেখানোর জন্য ক্লাস */
+        .loading-text.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ========================================================
+           ২. মূল ওয়েবসাইট হেডার এবং টুলবার স্টাইল
+           ======================================================== */
+        .main-header {
+            background: linear-gradient(to right, #009640, #1D70B8, #003366);
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between; /* লোগো বামে/ডানে সামঞ্জস্যের জন্য */
+            padding: 0 30px;
+        }
+
+        .logo-container img {
+            height: 50px;
+            object-fit: contain;
+        }
+
+        .toolbar-container {
+            background-color: #ffffff;
+            padding: 12px 20px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toolbar-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn-tool {
+            background-color: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            padding: 8px 14px;
+            color: #334155;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .btn-tool:hover {
+            background-color: #f8fafc;
+            border-color: #94a3b8;
+        }
+
+        .page-input {
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            width: 70px;
+            text-align: center;
+            padding: 6px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body style="margin:0; font-family: sans-serif; background-color: #f1f5f9;">
+
+    <!-- প্রি-লোডার -->
+    <div id="preloader">
+        <div class="ripple-container">
+            <div class="ripple"></div>
+            <div class="ripple"></div>
+            <div class="ripple-container"></div> <!-- ব্যাকআপ স্টেবল গ্রাফিক্স -->
+            
+            <img class="preloader-logo" src="https://via.placeholder.com/120x120/ffffff/000000?text=LOGO" alt="Asharqia Chamber">
+        </div>
+        
+        <div class="loading-text" id="loadingText">অনুগ্রহ করে অপেক্ষা করুন, লোড হচ্ছে...</div>
+    </div>
+
+    <!-- মেইন হেডার -->
+    <header class="main-header">
+        <div class="logo-container">
+            <img src="https://via.placeholder.com/150x50/ffffff/000000?text=LOGO" alt="Logo">
+        </div>
+    </header>
+
+    <!-- টুলবার এরিয়া -->
+    <div class="toolbar-container">
+        <div class="toolbar-row">
+            <button class="btn-tool"><i class="fa-solid fa-list"></i></button>
+            <div style="display: flex; align-items: center; border: 1px solid #cbd5e1; border-radius: 6px; background: white;">
+                <button class="btn-tool" style="border: none;"><i class="fa-solid fa-chevron-left"></i></button>
+                <input type="text" class="page-input" value="1/10" style="border: none; border-left: 1px solid #cbd5e1; border-right: 1px solid #cbd5e1;">
+                <button class="btn-tool" style="border: none;"><i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+            <button class="btn-tool"><i class="fa-solid fa-download"></i></button>
+        </div>
+
+        <div class="toolbar-row">
+            <button class="btn-tool"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
+            <button class="btn-tool"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+            <button class="btn-tool"><i class="fa-solid fa-arrows-left-right"></i></button>
+            <span style="color: #cbd5e1; margin: 0 4px;">|</span>
+            <button class="btn-tool"><i class="fa-solid fa-rotate-left"></i></button>
+            <button class="btn-tool"><i class="fa-solid fa-arrow-rotate-left"></i></button>
+            <button class="btn-tool"><i class="fa-solid fa-arrow-rotate-right"></i></button>
+            <button class="btn-tool"><i class="fa-solid fa-rotate-right"></i></button>
+            <span style="color: #cbd5e1; margin: 0 4px;">|</span>
+            <button class="btn-tool"><i class="fa-solid fa-moon"></i></button>
+        </div>
+    </div>
+
+    <!-- কন্টেন্ট এরিয়া -->
+    <div style="margin: 20px; padding: 100px 40px; background-color: #ffffff; border: 1px solid #e2e8f0; text-align: center; border-radius: 4px;">
+        <h2>স্বাগতম! হোম পেজটি সফলভাবে লোড হয়েছে।</h2>
+        <p>এটি আপনার ওয়েবসাইটের মূল কন্টেন্ট এরিয়া।</p>
+    </div>
+
+    <script>
+        // ২ সেকেন্ডের মধ্যে সাইট লোড না হলে 'Loading' লেখাটি ভেসে উঠবে
+        var textTimeout = setTimeout(function() {
+            document.getElementById('loadingText').classList.add('show');
+        }, 2000); 
+
+        // উইন্ডো পুরোপুরি লোড হওয়ার সাথে সাথেই প্রি-লোডার বন্ধ হয়ে যাবে (স্মুথ এক্সপেরিয়েন্স)
+        window.addEventListener('load', function() {
+            clearTimeout(textTimeout); // সাইট দ্রুত লোড হলে টেক্সট দেখানোর দরকার নেই
+            
+            var preloader = document.getElementById('preloader');
+            preloader.style.opacity = '0';
+            preloader.style.visibility = 'hidden';
+        });
+
+        // সেফটি ফলব্যাক: কোনো কারণে উইন্ডো লোড আটকে গেলে সর্বোচ্চ ৫ সেকেন্ড পর লোডার নিজে থেকেই চলে যাবে
+        setTimeout(function() {
+            var preloader = document.getElementById('preloader');
+            if(preloader.style.visibility !== 'hidden') {
+                preloader.style.opacity = '0';
+                preloader.style.visibility = 'hidden';
+            }
+        }, 5000);
+    </script>
+
+</body>
+</html>
